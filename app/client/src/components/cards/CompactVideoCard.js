@@ -23,6 +23,7 @@ import {
   getSetting,
   getPosterUrl,
   getGameAssetUrl,
+  isFirefox,
 } from '../../common/utils'
 import { GameService, VideoService, ConfigService } from '../../services'
 import UpdateDetailsModal from '../modal/UpdateDetailsModal'
@@ -457,6 +458,7 @@ const CompactVideoCard = ({
       />
 
       <Box
+        className="ff-card-root"
         sx={{
           width: '100%',
           height: '100%',
@@ -467,7 +469,7 @@ const CompactVideoCard = ({
           display: 'flex',
           flexDirection: 'column',
           opacity: gameReady ? 1 : 0,
-          transition: 'opacity 0.15s ease',
+          transition: isFirefox ? 'none' : 'opacity 0.15s ease',
         }}
       >
         {selected && (
@@ -486,7 +488,7 @@ const CompactVideoCard = ({
         <Box ref={cardRef} sx={{ aspectRatio: '16 / 9', overflow: 'hidden', position: 'relative' }}>
           <Skeleton
             variant="rectangular"
-            animation="wave"
+            animation={isFirefox ? false : 'wave'}
             width="100%"
             height="100%"
             sx={{
@@ -494,7 +496,7 @@ const CompactVideoCard = ({
               top: 0,
               left: 0,
               opacity: imgLoaded ? 0 : 1,
-              transition: 'opacity 0.8s ease',
+              transition: isFirefox ? 'none' : 'opacity 0.8s ease',
               bgcolor: 'rgba(30, 60, 130, 0.4)',
             }}
           />
@@ -532,7 +534,7 @@ const CompactVideoCard = ({
                 objectFit: 'cover',
                 display: 'block',
                 opacity: imgLoaded ? 1 : 0,
-                transition: 'opacity 0.8s ease, filter 0.3s ease, transform 0.3s ease',
+                transition: isFirefox ? 'none' : 'opacity 0.8s ease',
               }}
             />
 

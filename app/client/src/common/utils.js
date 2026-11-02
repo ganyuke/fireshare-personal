@@ -290,7 +290,7 @@ const getSourceMedia = (videoInfo, extension, { hasCrop, forceOriginal, hdrForma
 // video to match: nothing on macOS and Linux, and on Windows only from Firefox 153 with
 // mixed results, so a PQ original plays flat and grey. It gets the SDR copy unless the
 // viewer picks the original by hand (see getHdrPreference).
-const isFirefox = typeof navigator !== 'undefined' && /firefox/i.test(navigator.userAgent)
+export const isFirefox = typeof navigator !== 'undefined' && /firefox/i.test(navigator.userAgent)
 
 /**
  * Whether this browser will show HDR video on this display. Chrome reports

@@ -78,3 +78,14 @@ code {
     color: rgba(0, 219, 255, 1);
   }
 }
+
+/* firefox is the source of all my problems but at least it's not google */
+/* https://bugzilla.mozilla.org/show_bug.cgi?id=1698988 */
+html.firefox .ff-card-root {
+  isolation: isolate;
+  transform: translateZ(0);
+}
+
+html.firefox .MuiSkeleton-wave::after {
+  animation: none !important;
+}

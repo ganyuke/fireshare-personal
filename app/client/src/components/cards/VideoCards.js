@@ -7,6 +7,7 @@ import SensorsIcon from '@mui/icons-material/Sensors'
 import OndemandVideoIcon from '@mui/icons-material/OndemandVideo'
 import { VideoService } from '../../services'
 import CompactVideoCard from './CompactVideoCard'
+import { isFirefox } from '../../common/utils'
 
 const PAGE_SIZE = 48
 
@@ -182,9 +183,9 @@ const VideoCards = ({
             {vids.slice(0, visibleCount).map((v, index) => (
               <motion.div
                 key={v.path + v.video_id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: Math.min(index % PAGE_SIZE, 12) * 0.04 }}
+                initial={isFirefox ? { opacity: 0 } : { opacity: 0, y: 20 }}
+                animate={isFirefox ? { opacity: 1 } : { opacity: 1, y: 0 }}
+                transition={{ duration: isFirefox ? 0 : 0.3, delay: isFirefox ? 0 : Math.min(index % PAGE_SIZE, 12) * 0.04 }}
               >
                 <CompactVideoCard
                   video={v}

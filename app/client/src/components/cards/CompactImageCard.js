@@ -8,7 +8,7 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
 import PhotoIcon from '@mui/icons-material/Photo'
 import CheckIcon from '@mui/icons-material/Check'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
-import { getPublicImageUrl, getImageThumbnailUrl } from '../../common/utils'
+import { getPublicImageUrl, getImageThumbnailUrl, isFirefox } from '../../common/utils'
 import { ImageService } from '../../services'
 import UploaderMention from '../user/UploaderMention'
 import DeleteImageModal from '../modal/DeleteImageModal'
@@ -122,6 +122,7 @@ const CompactImageCard = ({
   return (
     <>
       <Box
+        className="ff-card-root"
         sx={{
           width: '100%',
           height: '100%',
@@ -156,7 +157,7 @@ const CompactImageCard = ({
         >
           <Skeleton
             variant="rectangular"
-            animation="wave"
+            animation={isFirefox ? false : 'wave'}
             width="100%"
             height="100%"
             sx={{
@@ -164,7 +165,7 @@ const CompactImageCard = ({
               top: 0,
               left: 0,
               opacity: imgLoaded ? 0 : 1,
-              transition: 'opacity 0.8s ease',
+              transition: isFirefox ? 'none' : 'opacity 0.8s ease',
               bgcolor: 'rgba(30, 60, 130, 0.4)',
             }}
           />
@@ -180,7 +181,7 @@ const CompactImageCard = ({
               objectFit: 'cover',
               display: 'block',
               opacity: imgLoaded ? 1 : 0,
-              transition: 'opacity 0.8s ease',
+              transition: isFirefox ? 'none' : 'opacity 0.8s ease',
             }}
           />
 
