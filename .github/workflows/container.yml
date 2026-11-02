@@ -1,0 +1,67 @@
+name: Container
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "app/**"
+      - "migrations/**"
+      - "Dockerfile.lite"
+      - "entrypoint-lite.sh"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Image tag (default latest)
+        required: true
+        default: latest
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: container-${{ github.ref_name }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  resolve-tag:
+    runs-on: ubuntu-24.04
+    outputs:
+      tag: ${{ steps.out.outputs.tag }}
+    steps:
+      - id: out
+        run: |
+          if [ "${{ github.event_name }}" = workflow_dispatch ]; then
+            echo "tag=${{ github.event.inputs.tag }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag=latest" >> "$GITHUB_OUTPUT"
+          fi
+
+  image:
+    needs: resolve-tag
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile.lite
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ github.repository }}:${{ needs.resolve-tag.outputs.tag }}
+          cache-from: type=gha,scope=container-${{ needs.resolve-tag.outputs.tag }}
+          cache-to: type=gha,mode=max,scope=container-${{ needs.resolve-tag.outputs.tag }}

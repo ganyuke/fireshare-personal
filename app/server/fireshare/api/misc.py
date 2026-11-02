@@ -19,6 +19,12 @@ _local_version_cache = {'version': None}
 _release_cache = {'releases': None, 'fetched_at': 0}
 
 
+def _version_tuple(version):
+    """Major.minor.patch for comparisons; strips -suffix and +build metadata."""
+    base = version.split('-', 1)[0].split('+', 1)[0]
+    return tuple(int(x) for x in base.split('.'))
+
+
 def _get_local_version():
     """Get the locally installed app version from package.json. Cached until server restart."""
     if _local_version_cache['version']:

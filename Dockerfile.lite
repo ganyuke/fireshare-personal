@@ -6,6 +6,8 @@ COPY app/client/package-lock.json ./
 COPY app/client/.env.* ./
 RUN npm ci --silent
 COPY app/client/ ./
+ARG VERSION_SUFFIX=spoon
+RUN node -e "const fs=require('fs');const suffix=process.argv[1]||'';const p=JSON.parse(fs.readFileSync('package.json'));const base=String(p.version).split('-')[0];p.version=suffix?base+'-'+suffix:base;fs.writeFileSync('package.json',JSON.stringify(p,null,2)+'\n');" "$VERSION_SUFFIX"
 RUN npm run build
 
 # Main application stage — Debian slim with Python 3.14 built in, no CUDA, no source-built FFmpeg.

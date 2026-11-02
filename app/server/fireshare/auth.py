@@ -10,7 +10,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from .models import User
 from . import db
 from . import permissions as fs_permissions
-from .api.misc import _get_local_version, _fetch_release_notes
+from .api.misc import _get_local_version, _fetch_release_notes, _version_tuple
 from .api.decorators import demo_restrict
 from .ip_whitelist import login_ip_required, get_client_ip, is_ip_permitted
 from . import login_throttle
@@ -215,7 +215,7 @@ def loggedin():
     latest_release = None
     if release_data and local_version:
         latest_version = release_data['version']
-        update_available = tuple(int(x) for x in latest_version.split('.')) > tuple(int(x) for x in local_version.split('.'))
+        update_available = _version_tuple(latest_version) > _version_tuple(local_version)
         if update_available:
             current_app.logger.info(f"A new version of Fireshare is available! You have v{local_version}, latest is v{latest_version}.")
             is_dev = current_app.config.get('ENVIRONMENT') == 'dev'
