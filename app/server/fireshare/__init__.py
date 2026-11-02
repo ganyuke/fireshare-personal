@@ -218,6 +218,10 @@ def create_app(init_schedule=False):
             f"entries ({app.config['LOGIN_IP_WHITELIST_TRUSTED_PROXIES']} trusted proxy hops)"
         )
 
+    app.config['FORWARD_AUTH_SECRET'] = (os.getenv('FORWARD_AUTH_SECRET') or '').strip()
+    if app.config['FORWARD_AUTH_SECRET']:
+        logger.info('Forward auth login enabled (Remote-User + X-Forward-Auth-Secret)')
+
     #Integrations
     app.config['DISCORD_WEBHOOK_URL'] = os.getenv('DISCORD_WEBHOOK_URL', '')
     app.config['GENERIC_WEBHOOK_URL'] = os.getenv('GENERIC_WEBHOOK_URL', '')
@@ -439,6 +443,12 @@ def create_app(init_schedule=False):
     # blueprint for non-auth parts of app
     from .main import main as main_blueprint
     app.register_blueprint(main_blueprint)
+
+    from .forward_auth import try_forward_auth_login
+
+    @app.before_request
+    def _forward_auth_login():
+        try_forward_auth_login()
 
     if init_schedule and os.environ.get('FIRESHARE_START_SCHEDULER') == '1':
         from .schedule import init_schedule as _init_schedule
